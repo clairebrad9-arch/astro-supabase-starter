@@ -1,0 +1,248 @@
+---
+import { GamificationService } from "../utils/gamification";
+
+interface Props {
+  userId: string;
+}
+
+const { userId } = Astro.props;
+---
+
+<div class="gamification-dashboard space-y-6">
+  <div class="user-level-card bg-gradient-to-br from-green-600 to-green-800 rounded-lg p-6 shadow-lg">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-2xl font-bold" id="user-level">Level 1</h2>
+        <p class="text-green-100 text-sm" id="user-title">Rookie Bettor</p>
+      </div>
+      <div class="text-right">
+        <div class="text-3xl font-bold" id="user-xp">0</div>
+        <div class="text-xs text-green-100">XP</div>
+      </div>
+    </div>
+    <div class="w-full bg-green-900 rounded-full h-3 mb-2">
+      <div
+        id="xp-progress-bar"
+        class="bg-yellow-400 h-3 rounded-full transition-all duration-500"
+        style="width: 0%"
+      ></div>
+    </div>
+    <p class="text-xs text-green-100 text-center" id="xp-to-next">0 XP to next level</p>
+  </div>
+
+  <div class="streak-card bg-neutral-700 rounded-lg p-6 border border-neutral-600">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-xl font-semibold mb-1">Daily Streak</h3>
+        <p class="text-sm text-neutral-400">Keep predicting to maintain your streak!</p>
+      </div>
+      <div class="text-center">
+        <div class="text-5xl mb-2">🔥</div>
+        <div class="text-3xl font-bold text-orange-400" id="streak-count">0</div>
+        <div class="text-xs text-neutral-400">days</div>
+      </div>
+    </div>
+    <div class="mt-4 pt-4 border-t border-neutral-600">
+      <div class="flex justify-between text-sm">
+        <span class="text-neutral-400">Longest Streak:</span>
+        <span class="font-bold" id="longest-streak">0 days</span>
+      </div>
+      <div class="flex justify-between text-sm mt-2">
+        <span class="text-neutral-400">Streak Bonus:</span>
+        <span class="font-bold text-green-400" id="streak-bonus">+0 XP</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="challenges-section">
+    <h3 class="text-xl font-semibold mb-4">Active Challenges</h3>
+    <div id="challenges-list" class="space-y-3">
+      <div class="text-sm text-neutral-400 text-center py-4">Loading challenges...</div>
+    </div>
+  </div>
+
+  <div class="achievements-section">
+    <h3 class="text-xl font-semibold mb-4">Achievements</h3>
+    <div id="achievements-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div class="text-sm text-neutral-400 text-center py-4 col-span-full">Loading achievements...</div>
+    </div>
+  </div>
+
+  <div class="leaderboard-section bg-neutral-700 rounded-lg p-6 border border-neutral-600">
+    <h3 class="text-xl font-semibold mb-4">🏆 Leaderboard</h3>
+    <div id="leaderboard-list" class="space-y-2">
+      <div class="text-sm text-neutral-400 text-center py-4">Loading leaderboard...</div>
+    </div>
+  </div>
+</div>
+
+<div id="level-up-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+  <div class="bg-gradient-to-br from-green-700 to-green-900 rounded-lg p-8 max-w-md text-center animate-bounce">
+    <div class="text-6xl mb-4">🎉</div>
+    <h2 class="text-3xl font-bold mb-2">Level Up!</h2>
+    <p class="text-xl mb-4">You've reached <span id="new-level" class="font-bold text-yellow-400">Level X</span></p>
+    <p class="text-sm text-green-100 mb-6">Keep up the great work!</p>
+    <button
+      id="close-level-up"
+      class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-6 rounded transition-colors"
+    >
+      Continue
+    </button>
+  </div>
+</div>
+
+<script>
+  import { GamificationService } from "../utils/gamification";
+
+  const userId = document.body.dataset.userId || "demo-user";
+  const gamificationService = new GamificationService(userId);
+
+  function loadUserLevel() {
+    const level = gamificationService.getUserLevel();
+    document.getElementById("user-level")!.textContent = `Level ${level.level}`;
+    document.getElementById("user-title")!.textContent = level.title;
+    document.getElementById("user-xp")!.textContent = level.xp.toString();
+    
+    const xpForCurrentLevel = Math.pow(level.level - 1, 2) * 100;
+    const xpProgress = ((level.xp - xpForCurrentLevel) / (Math.pow(level.level, 2) * 100 - xpForCurrentLevel)) * 100;
+    document.getElementById("xp-progress-bar")!.style.width = `${xpProgress}%`;
+    document.getElementById("xp-to-next")!.textContent = `${level.xpToNextLevel} XP to next level`;
+  }
+
+  function loadStreak() {
+    const streak = gamificationService.getStreak();
+    document.getElementById("streak-count")!.textContent = streak.current.toString();
+    document.getElementById("longest-streak")!.textContent = `${streak.longest} days`;
+    
+    const bonusXP = gamificationService.updateStreak().bonusXP;
+    document.getElementById("streak-bonus")!.textContent = `+${bonusXP} XP`;
+  }
+
+  function loadChallenges() {
+    const challenges = gamificationService.getChallenges();
+    const listEl = document.getElementById("challenges-list");
+    
+    if (challenges.length === 0) {
+      listEl!.innerHTML = '<div class="text-sm text-neutral-400 text-center py-4">No active challenges</div>';
+      return;
+    }
+
+    listEl!.innerHTML = challenges
+      .map(
+        (challenge) => {
+          const progress = (challenge.progress / challenge.target) * 100;
+          const statusClass = challenge.completed ? "bg-green-500 bg-opacity-20 border-green-500" : "bg-neutral-800 border-neutral-600";
+          const typeEmoji = challenge.type === "daily" ? "📅" : challenge.type === "weekly" ? "📊" : "🗓️";
+          
+          return `
+            <div class="${statusClass} border rounded-lg p-4">
+              <div class="flex items-start justify-between mb-2">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span>${typeEmoji}</span>
+                    <h4 class="font-semibold">${challenge.name}</h4>
+                    ${challenge.completed ? '<span class="text-xs bg-green-500 text-white px-2 py-1 rounded">✓ Complete</span>' : ''}
+                  </div>
+                  <p class="text-sm text-neutral-400">${challenge.description}</p>
+                </div>
+                <div class="text-right ml-4">
+                  <div class="text-xl font-bold text-yellow-400">+${challenge.reward}</div>
+                  <div class="text-xs text-neutral-400">XP</div>
+                </div>
+              </div>
+              <div class="w-full bg-neutral-700 rounded-full h-2 mb-2">
+                <div class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: ${progress}%"></div>
+              </div>
+              <div class="flex justify-between text-xs text-neutral-400">
+                <span>${challenge.progress} / ${challenge.target}</span>
+                <span>Expires: ${new Date(challenge.expiresAt).toLocaleDateString()}</span>
+              </div>
+            </div>
+          `;
+        }
+      )
+      .join("");
+  }
+
+  function loadAchievements() {
+    const achievements = gamificationService.getAchievements();
+    const gridEl = document.getElementById("achievements-grid");
+
+    gridEl!.innerHTML = achievements
+      .map(
+        (achievement) => {
+          const unlocked = !!achievement.unlockedAt;
+          const opacityClass = unlocked ? "opacity-100" : "opacity-40";
+          
+          return `
+            <div class="${opacityClass} bg-neutral-800 border ${unlocked ? 'border-yellow-500' : 'border-neutral-600'} rounded-lg p-4 text-center transition-all hover:scale-105">
+              <div class="text-4xl mb-2">${achievement.icon}</div>
+              <h4 class="font-semibold text-sm mb-1">${achievement.name}</h4>
+              <p class="text-xs text-neutral-400">${achievement.description}</p>
+              ${unlocked ? `<div class="text-xs text-green-400 mt-2">Unlocked!</div>` : ''}
+            </div>
+          `;
+        }
+      )
+      .join("");
+  }
+
+  function loadLeaderboard() {
+    const leaderboard = gamificationService.getLeaderboard();
+    const listEl = document.getElementById("leaderboard-list");
+
+    listEl!.innerHTML = leaderboard
+      .map(
+        (entry, index) => {
+          const isCurrentUser = entry.userId === userId;
+          const bgClass = isCurrentUser ? "bg-green-500 bg-opacity-20 border-green-500" : "bg-neutral-800 border-neutral-600";
+          const rankEmoji = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`;
+          
+          return `
+            <div class="${bgClass} border rounded p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-xl font-bold w-8">${rankEmoji}</span>
+                <div>
+                  <div class="font-semibold">${entry.username}</div>
+                  <div class="text-xs text-neutral-400">Level ${entry.level}</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="font-bold">${entry.xp.toLocaleString()}</div>
+                <div class="text-xs text-neutral-400">XP</div>
+              </div>
+            </div>
+          `;
+        }
+      )
+      .join("");
+  }
+
+  function simulatePrediction() {
+    const result = gamificationService.addXP(25);
+    
+    if (result.leveledUp) {
+      document.getElementById("new-level")!.textContent = `Level ${result.newLevel}`;
+      document.getElementById("level-up-modal")!.classList.remove("hidden");
+    }
+    
+    loadUserLevel();
+    loadStreak();
+    gamificationService.checkAchievements();
+    loadAchievements();
+  }
+
+  document.getElementById("close-level-up")?.addEventListener("click", () => {
+    document.getElementById("level-up-modal")!.classList.add("hidden");
+  });
+
+  loadUserLevel();
+  loadStreak();
+  loadChallenges();
+  loadAchievements();
+  loadLeaderboard();
+
+  window.addEventListener("prediction-made", () => {
+    simulatePrediction();
+  });
+</script>

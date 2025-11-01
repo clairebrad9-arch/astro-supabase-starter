@@ -15,24 +15,34 @@ const sports = [
 
 const keyFeatures = [
   {
-    title: "Expert Analysis",
-    description: "Deep statistical analysis and expert insights on every match",
-    icon: "📊"
-  },
-  {
-    title: "Real-Time Updates",
-    description: "Get instant notifications on odds changes and match updates",
-    icon: "⚡"
-  },
-  {
-    title: "Proven Track Record",
-    description: "Transparent win rate statistics across all sports",
-    icon: "🎯"
-  },
-  {
     title: "AI-Powered Predictions",
     description: "Advanced machine learning algorithms analyzing thousands of data points",
     icon: "🤖"
+  },
+  {
+    title: "Real-Time Data Processing",
+    description: "Live odds feeds and instant match updates powered by streaming technology",
+    icon: "⚡"
+  },
+  {
+    title: "Crypto Wallet Integration",
+    description: "Deposit and withdraw with Bitcoin, Ethereum, and USDT",
+    icon: "💰"
+  },
+  {
+    title: "Gamification & Rewards",
+    description: "Earn XP, unlock achievements, and climb the leaderboard",
+    icon: "🏆"
+  },
+  {
+    title: "EV+ Recommendations",
+    description: "Identify profitable betting opportunities with positive expected value",
+    icon: "📈"
+  },
+  {
+    title: "Expert Analysis",
+    description: "Deep statistical analysis powered by multiple data providers",
+    icon: "📊"
   }
 ];
 ---
@@ -98,12 +108,20 @@ const keyFeatures = [
       <p class="text-neutral-300 mb-6">
         Join thousands of successful bettors who trust Match Predictz for their sports predictions
       </p>
-      <a
-        href="/sports/football"
-        class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
-      >
-        View Today's Predictions
-      </a>
+      <div class="flex gap-4 justify-center flex-wrap">
+        <a
+          href="/dashboard"
+          class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+        >
+          Go to Dashboard
+        </a>
+        <a
+          href="/sports/football"
+          class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+        >
+          View Today's Predictions
+        </a>
+      </div>
     </section>
   </div>
 </Layout>

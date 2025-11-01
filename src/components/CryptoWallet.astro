@@ -1,0 +1,251 @@
+---
+interface Props {
+  userId: string;
+}
+
+const { userId } = Astro.props;
+---
+
+<div class="crypto-wallet bg-neutral-700 rounded-lg border border-neutral-600 p-6">
+  <h2 class="text-2xl font-bold mb-4">Crypto Wallet</h2>
+  
+  <div class="wallet-balance mb-6">
+    <h3 class="text-lg font-semibold mb-3 text-neutral-300">Your Balance</h3>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="balance-card bg-neutral-800 p-4 rounded border border-neutral-600">
+        <div class="text-sm text-neutral-400">Bitcoin (BTC)</div>
+        <div class="text-xl font-bold" id="btc-balance">0.0000</div>
+      </div>
+      <div class="balance-card bg-neutral-800 p-4 rounded border border-neutral-600">
+        <div class="text-sm text-neutral-400">Ethereum (ETH)</div>
+        <div class="text-xl font-bold" id="eth-balance">0.0000</div>
+      </div>
+      <div class="balance-card bg-neutral-800 p-4 rounded border border-neutral-600">
+        <div class="text-sm text-neutral-400">USDT (Tether)</div>
+        <div class="text-xl font-bold" id="usdt-balance">0.00</div>
+      </div>
+      <div class="balance-card bg-neutral-800 p-4 rounded border border-neutral-600">
+        <div class="text-sm text-neutral-400">USD</div>
+        <div class="text-xl font-bold" id="usd-balance">0.00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wallet-actions mb-6">
+    <div class="flex gap-3">
+      <button
+        id="deposit-btn"
+        class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded transition-colors"
+      >
+        Deposit
+      </button>
+      <button
+        id="withdraw-btn"
+        class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded transition-colors"
+      >
+        Withdraw
+      </button>
+    </div>
+  </div>
+
+  <div id="deposit-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+    <div class="bg-neutral-800 rounded-lg p-6 max-w-md w-full border border-neutral-600">
+      <h3 class="text-xl font-bold mb-4">Deposit Cryptocurrency</h3>
+      <div class="mb-4">
+        <label class="block text-sm text-neutral-300 mb-2">Select Currency</label>
+        <select
+          id="deposit-currency"
+          class="w-full bg-neutral-700 border border-neutral-600 rounded px-4 py-2 text-white"
+        >
+          <option value="btc">Bitcoin (BTC)</option>
+          <option value="eth">Ethereum (ETH)</option>
+          <option value="usdt">USDT (Tether)</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm text-neutral-300 mb-2">Deposit Address</label>
+        <div id="deposit-address" class="bg-neutral-700 border border-neutral-600 rounded px-4 py-2 text-sm break-all">
+          Click "Generate Address" to get your deposit address
+        </div>
+      </div>
+      <div class="mb-4 text-center" id="qr-code-container"></div>
+      <div class="flex gap-3">
+        <button
+          id="generate-address-btn"
+          class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors"
+        >
+          Generate Address
+        </button>
+        <button
+          id="close-deposit-modal"
+          class="flex-1 bg-neutral-600 hover:bg-neutral-500 text-white font-bold py-2 px-4 rounded transition-colors"
+        >
+          Close
+        </button>
+      </div>
+      <p class="text-xs text-neutral-400 mt-4">
+        Send only the selected cryptocurrency to this address. Sending other assets may result in permanent loss.
+      </p>
+    </div>
+  </div>
+
+  <div id="withdraw-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+    <div class="bg-neutral-800 rounded-lg p-6 max-w-md w-full border border-neutral-600">
+      <h3 class="text-xl font-bold mb-4">Withdraw Cryptocurrency</h3>
+      <div class="mb-4">
+        <label class="block text-sm text-neutral-300 mb-2">Select Currency</label>
+        <select
+          id="withdraw-currency"
+          class="w-full bg-neutral-700 border border-neutral-600 rounded px-4 py-2 text-white"
+        >
+          <option value="btc">Bitcoin (BTC)</option>
+          <option value="eth">Ethereum (ETH)</option>
+          <option value="usdt">USDT (Tether)</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm text-neutral-300 mb-2">Amount</label>
+        <input
+          type="number"
+          id="withdraw-amount"
+          placeholder="0.00"
+          step="0.0001"
+          class="w-full bg-neutral-700 border border-neutral-600 rounded px-4 py-2 text-white"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm text-neutral-300 mb-2">Withdrawal Address</label>
+        <input
+          type="text"
+          id="withdraw-address"
+          placeholder="Enter wallet address"
+          class="w-full bg-neutral-700 border border-neutral-600 rounded px-4 py-2 text-white"
+        />
+      </div>
+      <div class="flex gap-3">
+        <button
+          id="confirm-withdraw-btn"
+          class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors"
+        >
+          Confirm Withdrawal
+        </button>
+        <button
+          id="close-withdraw-modal"
+          class="flex-1 bg-neutral-600 hover:bg-neutral-500 text-white font-bold py-2 px-4 rounded transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+      <p class="text-xs text-neutral-400 mt-4">
+        Withdrawals are usually processed within 30 minutes. Network fees apply.
+      </p>
+    </div>
+  </div>
+
+  <div class="transaction-history">
+    <h3 class="text-lg font-semibold mb-3 text-neutral-300">Recent Transactions</h3>
+    <div id="transactions-list" class="space-y-2">
+      <div class="text-sm text-neutral-400 text-center py-4">No transactions yet</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { CryptoWalletService } from '../utils/cryptoWallet';
+
+  const userId = document.body.dataset.userId || 'demo-user';
+  const walletService = new CryptoWalletService(userId);
+
+  async function loadBalance() {
+    const balance = await walletService.getBalance();
+    document.getElementById('btc-balance')!.textContent = balance.btc.toFixed(8);
+    document.getElementById('eth-balance')!.textContent = balance.eth.toFixed(8);
+    document.getElementById('usdt-balance')!.textContent = balance.usdt.toFixed(2);
+    document.getElementById('usd-balance')!.textContent = balance.usd.toFixed(2);
+  }
+
+  async function loadTransactions() {
+    const transactions = walletService.getTransactions().slice(-5).reverse();
+    const listEl = document.getElementById('transactions-list');
+    
+    if (transactions.length === 0) {
+      listEl!.innerHTML = '<div class="text-sm text-neutral-400 text-center py-4">No transactions yet</div>';
+      return;
+    }
+
+    listEl!.innerHTML = transactions
+      .map(
+        (tx) => `
+        <div class="bg-neutral-800 p-3 rounded border border-neutral-600 text-sm">
+          <div class="flex justify-between items-center">
+            <span class="font-semibold">${tx.type.toUpperCase()}</span>
+            <span class="${tx.status === 'completed' ? 'text-green-400' : 'text-yellow-400'}">${tx.status}</span>
+          </div>
+          <div class="text-neutral-400 mt-1">
+            ${tx.amount} ${tx.currency.toUpperCase()} - ${new Date(tx.timestamp).toLocaleString()}
+          </div>
+        </div>
+      `
+      )
+      .join('');
+  }
+
+  document.getElementById('deposit-btn')?.addEventListener('click', () => {
+    document.getElementById('deposit-modal')?.classList.remove('hidden');
+  });
+
+  document.getElementById('close-deposit-modal')?.addEventListener('click', () => {
+    document.getElementById('deposit-modal')?.classList.add('hidden');
+  });
+
+  document.getElementById('withdraw-btn')?.addEventListener('click', () => {
+    document.getElementById('withdraw-modal')?.classList.remove('hidden');
+  });
+
+  document.getElementById('close-withdraw-modal')?.addEventListener('click', () => {
+    document.getElementById('withdraw-modal')?.classList.add('hidden');
+  });
+
+  document.getElementById('generate-address-btn')?.addEventListener('click', async () => {
+    const currency = (document.getElementById('deposit-currency') as HTMLSelectElement).value;
+    const address = await walletService.generateDepositAddress(currency);
+    
+    document.getElementById('deposit-address')!.textContent = address.address;
+    document.getElementById('qr-code-container')!.innerHTML = 
+      `<img src="${address.qrCode}" alt="QR Code" class="mx-auto" />
+       <p class="text-xs text-neutral-400 mt-2">Network: ${address.network}</p>`;
+  });
+
+  document.getElementById('confirm-withdraw-btn')?.addEventListener('click', async () => {
+    const currency = (document.getElementById('withdraw-currency') as HTMLSelectElement).value;
+    const amount = parseFloat((document.getElementById('withdraw-amount') as HTMLInputElement).value);
+    const address = (document.getElementById('withdraw-address') as HTMLInputElement).value;
+
+    if (!amount || amount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+
+    if (!address) {
+      alert('Please enter a withdrawal address');
+      return;
+    }
+
+    try {
+      await walletService.initiateWithdrawal(currency, amount, address);
+      alert('Withdrawal initiated successfully!');
+      document.getElementById('withdraw-modal')?.classList.add('hidden');
+      loadBalance();
+      loadTransactions();
+    } catch (error: any) {
+      alert(error.message || 'Withdrawal failed');
+    }
+  });
+
+  loadBalance();
+  loadTransactions();
+  setInterval(() => {
+    loadBalance();
+    loadTransactions();
+  }, 10000);
+</script>
