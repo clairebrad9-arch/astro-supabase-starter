@@ -1,0 +1,106 @@
+---
+import Layout from "../../components/Layout.astro";
+
+const upcomingMatches = [
+  {
+    tournament: "ATP Masters 1000",
+    player1: "Novak Djokovic",
+    player2: "Carlos Alcaraz",
+    date: "Friday, 14:00",
+    prediction: "Over 2.5 Sets",
+    confidence: "High",
+    odds: "1.80"
+  },
+  {
+    tournament: "WTA Finals",
+    player1: "Iga Swiatek",
+    player2: "Aryna Sabalenka",
+    date: "Saturday, 18:00",
+    prediction: "Swiatek to Win",
+    confidence: "Medium",
+    odds: "1.95"
+  },
+  {
+    tournament: "ATP 500",
+    player1: "Daniil Medvedev",
+    player2: "Stefanos Tsitsipas",
+    date: "Sunday, 16:00",
+    prediction: "Over 22.5 Games",
+    confidence: "High",
+    odds: "1.85"
+  }
+];
+
+const tips = [
+  "Analyze head-to-head records on specific surfaces",
+  "Consider recent form and tournament performance",
+  "Review serve and return statistics",
+  "Monitor weather conditions and court speed",
+  "Check for physical fatigue from previous matches"
+];
+---
+
+<Layout title="Tennis Predictions - Match Predictz">
+  <div class="space-y-12">
+    <section>
+      <h1 class="text-4xl font-bold mb-4">Tennis Predictions</h1>
+      <p class="text-neutral-300 text-lg mb-8">
+        Expert tennis predictions for ATP, WTA, and Grand Slam tournaments. Get detailed analysis on match winners, set betting, and game totals.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-3xl font-bold mb-6">Upcoming Tennis Picks</h2>
+      <div class="space-y-4">
+        {upcomingMatches.map((match) => (
+          <div class="bg-neutral-700 p-6 rounded-lg border border-neutral-600 hover:border-green-500 transition-all">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="text-sm text-yellow-400 font-semibold mb-2">{match.tournament}</div>
+                <div class="text-xl font-bold mb-1">
+                  {match.player1} vs {match.player2}
+                </div>
+                <div class="text-sm text-neutral-400">{match.date}</div>
+              </div>
+              <div class="flex flex-col md:items-end gap-2">
+                <div class="bg-yellow-500 text-black px-4 py-2 rounded-lg font-semibold">
+                  {match.prediction}
+                </div>
+                <div class="flex gap-4 text-sm">
+                  <span class={`font-semibold ${match.confidence === "High" ? "text-green-400" : "text-yellow-400"}`}>
+                    {match.confidence} Confidence
+                  </span>
+                  <span class="text-neutral-300">Odds: {match.odds}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-neutral-700 p-8 rounded-lg border border-neutral-600">
+      <h2 class="text-2xl font-bold mb-6">Tennis Betting Tips</h2>
+      <ul class="space-y-3">
+        {tips.map((tip) => (
+          <li class="flex items-start gap-3">
+            <span class="text-yellow-400 text-xl">✓</span>
+            <span class="text-neutral-300">{tip}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-4">About Tennis Predictions</h2>
+      <div class="text-neutral-300 space-y-4">
+        <p>
+          Tennis offers unique betting opportunities with individual matchups and various betting markets. Our experts analyze player form, surface preferences, and head-to-head records to deliver accurate predictions for ATP, WTA, and Grand Slam events.
+        </p>
+        <p>
+          We provide comprehensive coverage of all major tennis tournaments including the Australian Open, French Open, Wimbledon, and US Open, as well as Masters 1000 events and ATP/WTA tour matches. Our predictions cover match winners, set betting, game totals, and handicaps.
+        </p>
+      </div>
+    </section>
+  </div>
+</Layout>

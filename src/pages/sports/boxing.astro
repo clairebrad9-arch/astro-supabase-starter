@@ -1,0 +1,106 @@
+---
+import Layout from "../../components/Layout.astro";
+
+const upcomingFights = [
+  {
+    event: "Heavyweight Championship",
+    fighter1: "Tyson Fury",
+    fighter2: "Oleksandr Usyk",
+    date: "Saturday, 22:00",
+    prediction: "Fight to Go Distance",
+    confidence: "High",
+    odds: "2.20"
+  },
+  {
+    event: "Middleweight Title Fight",
+    fighter1: "Canelo Alvarez",
+    fighter2: "Jermall Charlo",
+    date: "Next Saturday, 23:00",
+    prediction: "Canelo by Decision",
+    confidence: "Medium",
+    odds: "1.85"
+  },
+  {
+    event: "Super Lightweight",
+    fighter1: "Terence Crawford",
+    fighter2: "Errol Spence Jr",
+    date: "In 2 weeks, 22:30",
+    prediction: "Under 10.5 Rounds",
+    confidence: "High",
+    odds: "1.95"
+  }
+];
+
+const tips = [
+  "Analyze fighting styles and historical matchups",
+  "Review knockout power and defensive capabilities",
+  "Consider reach advantage and physical attributes",
+  "Monitor training camp reports and weigh-in condition",
+  "Check judges' scoring history for championship fights"
+];
+---
+
+<Layout title="Boxing Predictions - Match Predictz">
+  <div class="space-y-12">
+    <section>
+      <h1 class="text-4xl font-bold mb-4">Boxing Predictions</h1>
+      <p class="text-neutral-300 text-lg mb-8">
+        Expert boxing predictions and betting analysis for championship fights and major bouts. Get insights on fight outcomes, method of victory, and round betting.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-3xl font-bold mb-6">Upcoming Fight Predictions</h2>
+      <div class="space-y-4">
+        {upcomingFights.map((fight) => (
+          <div class="bg-neutral-700 p-6 rounded-lg border border-neutral-600 hover:border-green-500 transition-all">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="text-sm text-purple-400 font-semibold mb-2">{fight.event}</div>
+                <div class="text-xl font-bold mb-1">
+                  {fight.fighter1} vs {fight.fighter2}
+                </div>
+                <div class="text-sm text-neutral-400">{fight.date}</div>
+              </div>
+              <div class="flex flex-col md:items-end gap-2">
+                <div class="bg-purple-500 text-white px-4 py-2 rounded-lg font-semibold">
+                  {fight.prediction}
+                </div>
+                <div class="flex gap-4 text-sm">
+                  <span class={`font-semibold ${fight.confidence === "High" ? "text-green-400" : "text-yellow-400"}`}>
+                    {fight.confidence} Confidence
+                  </span>
+                  <span class="text-neutral-300">Odds: {fight.odds}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-neutral-700 p-8 rounded-lg border border-neutral-600">
+      <h2 class="text-2xl font-bold mb-6">Boxing Betting Tips</h2>
+      <ul class="space-y-3">
+        {tips.map((tip) => (
+          <li class="flex items-start gap-3">
+            <span class="text-purple-400 text-xl">✓</span>
+            <span class="text-neutral-300">{tip}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-4">About Boxing Predictions</h2>
+      <div class="text-neutral-300 space-y-4">
+        <p>
+          Boxing betting requires deep analysis of fighter styles, power, defense, and championship experience. Our experts break down every major fight, analyzing technical skills, physical advantages, and mental preparation to deliver accurate predictions.
+        </p>
+        <p>
+          We provide comprehensive coverage of all major boxing events including world title fights across all weight divisions. Our predictions cover fight outcomes (KO, TKO, Decision), method of victory, round betting, and over/under total rounds. We analyze punch statistics, knockout ratios, and historical performance against similar opponents.
+        </p>
+      </div>
+    </section>
+  </div>
+</Layout>

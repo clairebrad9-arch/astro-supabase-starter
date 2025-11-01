@@ -1,0 +1,99 @@
+---
+import Layout from "../../components/Layout.astro";
+
+const upcomingRaces = [
+  {
+    race: "Monaco Grand Prix",
+    date: "Sunday, 15:00",
+    prediction: "Max Verstappen to Win",
+    confidence: "High",
+    odds: "1.75"
+  },
+  {
+    race: "Spanish Grand Prix",
+    date: "Next Sunday, 15:00",
+    prediction: "Ferrari 1-2 Finish",
+    confidence: "Medium",
+    odds: "3.50"
+  },
+  {
+    race: "British Grand Prix",
+    date: "In 2 weeks, 15:00",
+    prediction: "Podium Finish for Hamilton",
+    confidence: "High",
+    odds: "2.10"
+  }
+];
+
+const tips = [
+  "Analyze qualifying results and grid positions",
+  "Consider track characteristics and car performance",
+  "Review historical performance at specific circuits",
+  "Monitor weather forecasts and tire strategies",
+  "Check team form and recent upgrades"
+];
+---
+
+<Layout title="F1 Predictions - Match Predictz">
+  <div class="space-y-12">
+    <section>
+      <h1 class="text-4xl font-bold mb-4">Formula 1 Predictions</h1>
+      <p class="text-neutral-300 text-lg mb-8">
+        Expert Formula 1 predictions and betting tips for every Grand Prix. Get detailed analysis on race winners, podium finishes, and head-to-head matchups.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-3xl font-bold mb-6">Upcoming Race Predictions</h2>
+      <div class="space-y-4">
+        {upcomingRaces.map((race) => (
+          <div class="bg-neutral-700 p-6 rounded-lg border border-neutral-600 hover:border-green-500 transition-all">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="text-xl font-bold mb-1 text-red-400">
+                  {race.race}
+                </div>
+                <div class="text-sm text-neutral-400">{race.date}</div>
+              </div>
+              <div class="flex flex-col md:items-end gap-2">
+                <div class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold">
+                  {race.prediction}
+                </div>
+                <div class="flex gap-4 text-sm">
+                  <span class={`font-semibold ${race.confidence === "High" ? "text-green-400" : "text-yellow-400"}`}>
+                    {race.confidence} Confidence
+                  </span>
+                  <span class="text-neutral-300">Odds: {race.odds}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-neutral-700 p-8 rounded-lg border border-neutral-600">
+      <h2 class="text-2xl font-bold mb-6">F1 Betting Tips</h2>
+      <ul class="space-y-3">
+        {tips.map((tip) => (
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 text-xl">✓</span>
+            <span class="text-neutral-300">{tip}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-4">About F1 Predictions</h2>
+      <div class="text-neutral-300 space-y-4">
+        <p>
+          Formula 1 betting combines technical analysis with race strategy and driver skill assessment. Our experts analyze qualifying performance, historical circuit data, team upgrades, and weather conditions to provide accurate predictions for every Grand Prix.
+        </p>
+        <p>
+          We cover all aspects of F1 betting including race winners, podium finishes, fastest lap, head-to-head driver matchups, and constructor battles. Our analysis considers car performance, track characteristics, tire strategies, and pit stop efficiency to deliver winning predictions.
+        </p>
+      </div>
+    </section>
+  </div>
+</Layout>

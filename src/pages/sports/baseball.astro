@@ -1,0 +1,106 @@
+---
+import Layout from "../../components/Layout.astro";
+
+const upcomingMatches = [
+  {
+    league: "MLB",
+    homeTeam: "New York Yankees",
+    awayTeam: "Boston Red Sox",
+    date: "Tonight, 19:10",
+    prediction: "Over 8.5 Runs",
+    confidence: "High",
+    odds: "1.95"
+  },
+  {
+    league: "MLB",
+    homeTeam: "Los Angeles Dodgers",
+    awayTeam: "San Francisco Giants",
+    date: "Tonight, 22:10",
+    prediction: "Dodgers -1.5",
+    confidence: "Medium",
+    odds: "2.00"
+  },
+  {
+    league: "MLB",
+    homeTeam: "Houston Astros",
+    awayTeam: "Texas Rangers",
+    date: "Tomorrow, 20:10",
+    prediction: "Under 9.5 Runs",
+    confidence: "High",
+    odds: "1.85"
+  }
+];
+
+const tips = [
+  "Analyze starting pitcher matchups and recent form",
+  "Consider bullpen strength and usage patterns",
+  "Review batting averages against pitcher handedness",
+  "Monitor weather conditions and wind direction",
+  "Check ballpark factors and run scoring trends"
+];
+---
+
+<Layout title="Baseball Predictions - Match Predictz">
+  <div class="space-y-12">
+    <section>
+      <h1 class="text-4xl font-bold mb-4">Baseball Predictions</h1>
+      <p class="text-neutral-300 text-lg mb-8">
+        Professional baseball predictions for MLB and international leagues. Expert analysis on run lines, totals, and moneyline picks for every game.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-3xl font-bold mb-6">Today's Baseball Picks</h2>
+      <div class="space-y-4">
+        {upcomingMatches.map((match) => (
+          <div class="bg-neutral-700 p-6 rounded-lg border border-neutral-600 hover:border-green-500 transition-all">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="text-sm text-red-400 font-semibold mb-2">{match.league}</div>
+                <div class="text-xl font-bold mb-1">
+                  {match.homeTeam} vs {match.awayTeam}
+                </div>
+                <div class="text-sm text-neutral-400">{match.date}</div>
+              </div>
+              <div class="flex flex-col md:items-end gap-2">
+                <div class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold">
+                  {match.prediction}
+                </div>
+                <div class="flex gap-4 text-sm">
+                  <span class={`font-semibold ${match.confidence === "High" ? "text-green-400" : "text-yellow-400"}`}>
+                    {match.confidence} Confidence
+                  </span>
+                  <span class="text-neutral-300">Odds: {match.odds}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-neutral-700 p-8 rounded-lg border border-neutral-600">
+      <h2 class="text-2xl font-bold mb-6">Baseball Betting Tips</h2>
+      <ul class="space-y-3">
+        {tips.map((tip) => (
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 text-xl">✓</span>
+            <span class="text-neutral-300">{tip}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-4">About Baseball Predictions</h2>
+      <div class="text-neutral-300 space-y-4">
+        <p>
+          Baseball betting requires careful analysis of pitching matchups, offensive trends, and ballpark factors. Our experts provide comprehensive coverage of MLB games, focusing on starting pitcher performance, bullpen strength, and team batting statistics.
+        </p>
+        <p>
+          We analyze key metrics including ERA, WHIP, batting averages, on-base percentages, and slugging percentages to deliver accurate predictions. Our baseball picks cover run lines (spread), over/under totals, moneylines, first 5 innings, and player props.
+        </p>
+      </div>
+    </section>
+  </div>
+</Layout>

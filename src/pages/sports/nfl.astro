@@ -1,0 +1,99 @@
+---
+import Layout from "../../components/Layout.astro";
+
+const upcomingMatches = [
+  {
+    matchup: "Kansas City Chiefs vs Buffalo Bills",
+    date: "Sunday, 16:25",
+    prediction: "Over 51.5 Points",
+    confidence: "High",
+    odds: "1.95"
+  },
+  {
+    matchup: "San Francisco 49ers vs Dallas Cowboys",
+    date: "Sunday, 20:20",
+    prediction: "49ers -3.5",
+    confidence: "Medium",
+    odds: "1.90"
+  },
+  {
+    matchup: "Philadelphia Eagles vs New York Giants",
+    date: "Monday, 20:15",
+    prediction: "Eagles Win & Under 47.5",
+    confidence: "High",
+    odds: "2.20"
+  }
+];
+
+const tips = [
+  "Study offensive and defensive rankings",
+  "Consider weather conditions and playing surface",
+  "Analyze quarterback matchups and pass rush",
+  "Review division rivalry history",
+  "Monitor line movements and public betting trends"
+];
+---
+
+<Layout title="NFL Predictions - Match Predictz">
+  <div class="space-y-12">
+    <section>
+      <h1 class="text-4xl font-bold mb-4">NFL Predictions</h1>
+      <p class="text-neutral-300 text-lg mb-8">
+        Expert NFL predictions and betting analysis for every game. Get insights on spreads, totals, moneylines, and prop bets from our professional analysts.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-3xl font-bold mb-6">This Week's NFL Picks</h2>
+      <div class="space-y-4">
+        {upcomingMatches.map((match) => (
+          <div class="bg-neutral-700 p-6 rounded-lg border border-neutral-600 hover:border-green-500 transition-all">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="text-xl font-bold mb-1">
+                  {match.matchup}
+                </div>
+                <div class="text-sm text-neutral-400">{match.date}</div>
+              </div>
+              <div class="flex flex-col md:items-end gap-2">
+                <div class="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold">
+                  {match.prediction}
+                </div>
+                <div class="flex gap-4 text-sm">
+                  <span class={`font-semibold ${match.confidence === "High" ? "text-green-400" : "text-yellow-400"}`}>
+                    {match.confidence} Confidence
+                  </span>
+                  <span class="text-neutral-300">Odds: {match.odds}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-neutral-700 p-8 rounded-lg border border-neutral-600">
+      <h2 class="text-2xl font-bold mb-6">NFL Betting Tips</h2>
+      <ul class="space-y-3">
+        {tips.map((tip) => (
+          <li class="flex items-start gap-3">
+            <span class="text-blue-400 text-xl">✓</span>
+            <span class="text-neutral-300">{tip}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-4">About NFL Predictions</h2>
+      <div class="text-neutral-300 space-y-4">
+        <p>
+          The NFL is America's most popular sport for betting, with extensive markets on every game. Our analysts provide comprehensive coverage of all regular season, playoff, and Super Bowl matchups.
+        </p>
+        <p>
+          We analyze key metrics including offensive and defensive efficiency, turnover differentials, red zone performance, and situational statistics to deliver accurate predictions. Our NFL picks cover point spreads, over/under totals, moneylines, and player props.
+        </p>
+      </div>
+    </section>
+  </div>
+</Layout>

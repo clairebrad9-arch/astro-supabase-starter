@@ -1,0 +1,106 @@
+---
+import Layout from "../../components/Layout.astro";
+
+const upcomingMatches = [
+  {
+    league: "UEFA Champions League",
+    homeTeam: "Paris Saint-Germain",
+    awayTeam: "Bayern Munich",
+    date: "Wednesday, 21:00",
+    prediction: "Both Teams to Score",
+    confidence: "High",
+    odds: "1.75"
+  },
+  {
+    league: "World Cup Qualifiers",
+    homeTeam: "Brazil",
+    awayTeam: "Argentina",
+    date: "Friday, 02:30",
+    prediction: "Over 2.5 Goals",
+    confidence: "Medium",
+    odds: "2.00"
+  },
+  {
+    league: "MLS",
+    homeTeam: "LA Galaxy",
+    awayTeam: "Seattle Sounders",
+    date: "Saturday, 22:30",
+    prediction: "Home Win",
+    confidence: "High",
+    odds: "1.85"
+  }
+];
+
+const tips = [
+  "Follow international team news and player availability",
+  "Consider travel factors for international fixtures",
+  "Analyze qualifying campaign form and pressure situations",
+  "Review historical performance in major tournaments",
+  "Monitor tactical approaches in knockout stages"
+];
+---
+
+<Layout title="Soccer Predictions - Match Predictz">
+  <div class="space-y-12">
+    <section>
+      <h1 class="text-4xl font-bold mb-4">Soccer Predictions</h1>
+      <p class="text-neutral-300 text-lg mb-8">
+        International soccer predictions covering World Cup, continental championships, and domestic leagues worldwide. Expert analysis for all major tournaments and qualifiers.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-3xl font-bold mb-6">Upcoming Soccer Predictions</h2>
+      <div class="space-y-4">
+        {upcomingMatches.map((match) => (
+          <div class="bg-neutral-700 p-6 rounded-lg border border-neutral-600 hover:border-green-500 transition-all">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="text-sm text-green-400 font-semibold mb-2">{match.league}</div>
+                <div class="text-xl font-bold mb-1">
+                  {match.homeTeam} vs {match.awayTeam}
+                </div>
+                <div class="text-sm text-neutral-400">{match.date}</div>
+              </div>
+              <div class="flex flex-col md:items-end gap-2">
+                <div class="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold">
+                  {match.prediction}
+                </div>
+                <div class="flex gap-4 text-sm">
+                  <span class={`font-semibold ${match.confidence === "High" ? "text-green-400" : "text-yellow-400"}`}>
+                    {match.confidence} Confidence
+                  </span>
+                  <span class="text-neutral-300">Odds: {match.odds}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-neutral-700 p-8 rounded-lg border border-neutral-600">
+      <h2 class="text-2xl font-bold mb-6">Soccer Betting Tips</h2>
+      <ul class="space-y-3">
+        {tips.map((tip) => (
+          <li class="flex items-start gap-3">
+            <span class="text-green-400 text-xl">✓</span>
+            <span class="text-neutral-300">{tip}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-4">About Soccer Predictions</h2>
+      <div class="text-neutral-300 space-y-4">
+        <p>
+          International soccer features the world's best national teams competing in prestigious tournaments like the World Cup, European Championships, Copa America, and more. Our experts provide comprehensive analysis for all major competitions.
+        </p>
+        <p>
+          We analyze team form, player quality, tactical matchups, and tournament pressure to deliver accurate predictions. Coverage includes qualification matches, group stages, knockout rounds, and finals across all major soccer tournaments.
+        </p>
+      </div>
+    </section>
+  </div>
+</Layout>

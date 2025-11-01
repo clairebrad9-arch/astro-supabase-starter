@@ -1,0 +1,106 @@
+---
+import Layout from "../../components/Layout.astro";
+
+const upcomingMatches = [
+  {
+    league: "NHL",
+    homeTeam: "Toronto Maple Leafs",
+    awayTeam: "Montreal Canadiens",
+    date: "Tonight, 19:00",
+    prediction: "Over 6.5 Goals",
+    confidence: "High",
+    odds: "1.90"
+  },
+  {
+    league: "NHL",
+    homeTeam: "Colorado Avalanche",
+    awayTeam: "Vegas Golden Knights",
+    date: "Tonight, 22:00",
+    prediction: "Home Win in Regulation",
+    confidence: "Medium",
+    odds: "2.10"
+  },
+  {
+    league: "NHL",
+    homeTeam: "Boston Bruins",
+    awayTeam: "New York Rangers",
+    date: "Tomorrow, 19:30",
+    prediction: "Both Teams to Score 3+",
+    confidence: "High",
+    odds: "2.25"
+  }
+];
+
+const tips = [
+  "Check goaltender matchups and recent form",
+  "Analyze power play and penalty kill percentages",
+  "Consider back-to-back game fatigue factors",
+  "Review home/away splits and divisional records",
+  "Monitor line combinations and defensive pairings"
+];
+---
+
+<Layout title="Hockey Predictions - Match Predictz">
+  <div class="space-y-12">
+    <section>
+      <h1 class="text-4xl font-bold mb-4">Hockey Predictions</h1>
+      <p class="text-neutral-300 text-lg mb-8">
+        Professional hockey predictions for NHL and international competitions. Get expert analysis on puck lines, totals, and moneyline picks for every game.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-3xl font-bold mb-6">Today's Hockey Picks</h2>
+      <div class="space-y-4">
+        {upcomingMatches.map((match) => (
+          <div class="bg-neutral-700 p-6 rounded-lg border border-neutral-600 hover:border-green-500 transition-all">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="text-sm text-blue-400 font-semibold mb-2">{match.league}</div>
+                <div class="text-xl font-bold mb-1">
+                  {match.homeTeam} vs {match.awayTeam}
+                </div>
+                <div class="text-sm text-neutral-400">{match.date}</div>
+              </div>
+              <div class="flex flex-col md:items-end gap-2">
+                <div class="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold">
+                  {match.prediction}
+                </div>
+                <div class="flex gap-4 text-sm">
+                  <span class={`font-semibold ${match.confidence === "High" ? "text-green-400" : "text-yellow-400"}`}>
+                    {match.confidence} Confidence
+                  </span>
+                  <span class="text-neutral-300">Odds: {match.odds}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-neutral-700 p-8 rounded-lg border border-neutral-600">
+      <h2 class="text-2xl font-bold mb-6">Hockey Betting Tips</h2>
+      <ul class="space-y-3">
+        {tips.map((tip) => (
+          <li class="flex items-start gap-3">
+            <span class="text-blue-400 text-xl">✓</span>
+            <span class="text-neutral-300">{tip}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-4">About Hockey Predictions</h2>
+      <div class="text-neutral-300 space-y-4">
+        <p>
+          Hockey betting offers exciting opportunities with fast-paced action and multiple betting markets. Our experts analyze team statistics, goaltender performance, and matchup data to provide accurate predictions for NHL games and international tournaments.
+        </p>
+        <p>
+          We cover all aspects of hockey betting including puck lines (spread), over/under totals, moneylines, period betting, and player props. Our analysis considers special teams performance, goalie matchups, and situational factors that impact game outcomes.
+        </p>
+      </div>
+    </section>
+  </div>
+</Layout>

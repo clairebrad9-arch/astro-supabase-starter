@@ -14,4 +14,13 @@
   img {
     @apply border rounded-sm border-neutral-500;
   }
+  h1 {
+    @apply text-white;
+  }
+  h2 {
+    @apply text-white;
+  }
+  h3 {
+    @apply text-white;
+  }
 }
