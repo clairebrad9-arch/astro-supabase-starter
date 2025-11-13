@@ -1,0 +1,269 @@
+---
+import Layout from "../../components/Layout.astro";
+---
+
+<Layout title="Football Predictions - Match Predictz">
+  <div class="space-y-6">
+    <section class="bg-neutral-700 p-6 rounded-lg border border-neutral-600">
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h1 class="text-3xl font-bold mb-2">Football Predictions</h1>
+          <p class="text-neutral-300 text-sm">
+            AI-powered predictions for top European leagues
+          </p>
+        </div>
+        <div class="text-sm text-neutral-300">
+          <span class="text-neutral-400">Last updated:</span> <span id="last-updated" class="font-semibold">Loading...</span>
+        </div>
+      </div>
+    </section>
+
+    <div id="loading" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+      <p class="text-neutral-300 mt-4">Loading predictions...</p>
+    </div>
+
+    <div id="predictions-container" class="hidden space-y-6"></div>
+
+    <section class="bg-neutral-700 p-6 rounded-lg border border-neutral-600">
+      <h2 class="text-xl font-bold mb-4">Prediction Markets</h2>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+        <div class="text-neutral-300">
+          <span class="font-semibold text-white">1X2:</span> Home Win, Draw, Away Win
+        </div>
+        <div class="text-neutral-300">
+          <span class="font-semibold text-white">O/U:</span> Over/Under 1.5, 2.5, 3.5
+        </div>
+        <div class="text-neutral-300">
+          <span class="font-semibold text-white">BTTS:</span> Both Teams to Score
+        </div>
+        <div class="text-neutral-300">
+          <span class="font-semibold text-white">Halves:</span> 1st & 2nd Half
+        </div>
+        <div class="text-neutral-300">
+          <span class="font-semibold text-white">Update:</span> Every 5 minutes
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    interface Prediction {
+      probability: number;
+      odds: string;
+      confidence: string;
+    }
+
+    interface Match {
+      league: string;
+      homeTeam: string;
+      awayTeam: string;
+      date: string;
+      predictions: {
+        homeWin: Prediction;
+        awayWin: Prediction;
+        draw: Prediction;
+        over25: Prediction;
+        over15: Prediction;
+        over35: Prediction;
+        gg: Prediction;
+        ng: Prediction;
+        firstHalfHomeWin: Prediction;
+        secondHalfHomeWin: Prediction;
+      };
+    }
+
+    interface ApiResponse {
+      matches: Match[];
+      lastUpdated: string;
+    }
+
+    function getConfidenceClass(confidence: string): string {
+      switch (confidence) {
+        case 'High':
+          return 'text-green-400';
+        case 'Medium':
+          return 'text-yellow-400';
+        default:
+          return 'text-orange-400';
+      }
+    }
+
+    function getBestPrediction(predictions: Match['predictions']): { label: string; data: Prediction } {
+      const options = [
+        { label: 'Home Win', data: predictions.homeWin },
+        { label: 'Away Win', data: predictions.awayWin },
+        { label: 'Draw', data: predictions.draw },
+      ];
+      
+      return options.reduce((best, current) => 
+        current.data.probability > best.data.probability ? current : best
+      );
+    }
+
+    function renderMatch(match: Match): string {
+      const best = getBestPrediction(match.predictions);
+      
+      return `
+        <div class="bg-neutral-700 border border-neutral-600 hover:border-green-500 transition-all rounded-lg overflow-hidden">
+          <div class="bg-neutral-750 px-4 py-3 border-b border-neutral-600 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+              <div class="text-lg font-bold">${match.homeTeam} vs ${match.awayTeam}</div>
+            </div>
+            <div class="text-sm text-neutral-400">${match.date}</div>
+          </div>
+
+          <div class="p-4">
+            <div class="mb-4 bg-green-500/10 border border-green-500/30 rounded-lg p-3">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div class="text-xs text-green-400 mb-1">TOP PREDICTION</div>
+                  <div class="font-bold text-lg">${best.label}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-2xl font-bold text-green-400">${best.data.odds}</div>
+                  <div class="text-xs ${getConfidenceClass(best.data.confidence)}">${best.data.confidence}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mb-3">
+              <div class="bg-neutral-800 p-2 rounded text-center border border-neutral-600">
+                <div class="text-xs text-neutral-400 mb-1">Home</div>
+                <div class="font-bold text-green-400">${match.predictions.homeWin.odds}</div>
+                <div class="text-xs text-neutral-500">${(match.predictions.homeWin.probability * 100).toFixed(0)}%</div>
+              </div>
+              
+              <div class="bg-neutral-800 p-2 rounded text-center border border-neutral-600">
+                <div class="text-xs text-neutral-400 mb-1">Draw</div>
+                <div class="font-bold text-yellow-400">${match.predictions.draw.odds}</div>
+                <div class="text-xs text-neutral-500">${(match.predictions.draw.probability * 100).toFixed(0)}%</div>
+              </div>
+              
+              <div class="bg-neutral-800 p-2 rounded text-center border border-neutral-600">
+                <div class="text-xs text-neutral-400 mb-1">Away</div>
+                <div class="font-bold text-blue-400">${match.predictions.awayWin.odds}</div>
+                <div class="text-xs text-neutral-500">${(match.predictions.awayWin.probability * 100).toFixed(0)}%</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mb-3">
+              <div class="bg-neutral-800 p-2 rounded text-center border border-neutral-600">
+                <div class="text-xs text-neutral-400 mb-1">O 1.5</div>
+                <div class="font-bold">${match.predictions.over15.odds}</div>
+                <div class="text-xs text-neutral-500">${(match.predictions.over15.probability * 100).toFixed(0)}%</div>
+              </div>
+              
+              <div class="bg-neutral-800 p-2 rounded text-center border border-neutral-600">
+                <div class="text-xs text-neutral-400 mb-1">O 2.5</div>
+                <div class="font-bold">${match.predictions.over25.odds}</div>
+                <div class="text-xs text-neutral-500">${(match.predictions.over25.probability * 100).toFixed(0)}%</div>
+              </div>
+              
+              <div class="bg-neutral-800 p-2 rounded text-center border border-neutral-600">
+                <div class="text-xs text-neutral-400 mb-1">O 3.5</div>
+                <div class="font-bold">${match.predictions.over35.odds}</div>
+                <div class="text-xs text-neutral-500">${(match.predictions.over35.probability * 100).toFixed(0)}%</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 mb-3">
+              <div class="bg-neutral-800 p-2 rounded text-center border border-neutral-600">
+                <div class="text-xs text-neutral-400 mb-1">GG</div>
+                <div class="font-bold">${match.predictions.gg.odds}</div>
+                <div class="text-xs text-neutral-500">${(match.predictions.gg.probability * 100).toFixed(0)}%</div>
+              </div>
+              
+              <div class="bg-neutral-800 p-2 rounded text-center border border-neutral-600">
+                <div class="text-xs text-neutral-400 mb-1">NG</div>
+                <div class="font-bold">${match.predictions.ng.odds}</div>
+                <div class="text-xs text-neutral-500">${(match.predictions.ng.probability * 100).toFixed(0)}%</div>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2">
+              <div class="bg-neutral-800 p-2 rounded text-center border border-neutral-600">
+                <div class="text-xs text-neutral-400 mb-1">1st Half</div>
+                <div class="font-bold">${match.predictions.firstHalfHomeWin.odds}</div>
+                <div class="text-xs text-neutral-500">${(match.predictions.firstHalfHomeWin.probability * 100).toFixed(0)}%</div>
+              </div>
+              
+              <div class="bg-neutral-800 p-2 rounded text-center border border-neutral-600">
+                <div class="text-xs text-neutral-400 mb-1">2nd Half</div>
+                <div class="font-bold">${match.predictions.secondHalfHomeWin.odds}</div>
+                <div class="text-xs text-neutral-500">${(match.predictions.secondHalfHomeWin.probability * 100).toFixed(0)}%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function groupByLeague(matches: Match[]): Record<string, Match[]> {
+      return matches.reduce((acc, match) => {
+        if (!acc[match.league]) {
+          acc[match.league] = [];
+        }
+        acc[match.league].push(match);
+        return acc;
+      }, {} as Record<string, Match[]>);
+    }
+
+    async function loadPredictions() {
+      try {
+        const response = await fetch('/api/football-predictions');
+        if (!response.ok) throw new Error('Failed to fetch predictions');
+        
+        const data: ApiResponse = await response.json();
+        const groupedMatches = groupByLeague(data.matches);
+        
+        const container = document.getElementById('predictions-container');
+        if (!container) return;
+
+        let html = '';
+        for (const [league, matches] of Object.entries(groupedMatches)) {
+          html += `
+            <section class="bg-neutral-700 rounded-lg border border-neutral-600 overflow-hidden">
+              <div class="bg-green-500/20 border-b border-neutral-600 px-4 py-3">
+                <h2 class="text-xl font-bold text-green-400">${league}</h2>
+              </div>
+              <div class="p-4 space-y-4">
+                ${matches.map(renderMatch).join('')}
+              </div>
+            </section>
+          `;
+        }
+        
+        container.innerHTML = html;
+        container.classList.remove('hidden');
+        
+        const loadingEl = document.getElementById('loading');
+        if (loadingEl) loadingEl.classList.add('hidden');
+
+        const lastUpdatedEl = document.getElementById('last-updated');
+        if (lastUpdatedEl) {
+          const date = new Date(data.lastUpdated);
+          lastUpdatedEl.textContent = date.toLocaleString();
+        }
+      } catch (error) {
+        console.error('Error loading predictions:', error);
+        const container = document.getElementById('predictions-container');
+        if (container) {
+          container.innerHTML = `
+            <div class="bg-red-900/20 border border-red-500 text-red-300 p-6 rounded-lg">
+              <p class="font-bold mb-2">Error loading predictions</p>
+              <p class="text-sm">Please try refreshing the page. If the problem persists, check back later.</p>
+            </div>
+          `;
+          container.classList.remove('hidden');
+        }
+        const loadingEl = document.getElementById('loading');
+        if (loadingEl) loadingEl.classList.add('hidden');
+      }
+    }
+
+    loadPredictions();
+
+    setInterval(loadPredictions, 300000);
+  </script>
+</Layout>

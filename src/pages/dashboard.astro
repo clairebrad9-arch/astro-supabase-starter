@@ -1,0 +1,191 @@
+---
+import Layout from "../components/Layout.astro";
+import AIPredictionWidget from "../components/AIPredictionWidget.astro";
+import CryptoWallet from "../components/CryptoWallet.astro";
+import GamificationDashboard from "../components/GamificationDashboard.astro";
+---
+
+<Layout title="Dashboard - Match Predictz">
+  <div class="space-y-8">
+    <section class="bg-gradient-to-r from-green-600 to-blue-600 p-8 rounded-lg">
+      <h1 class="text-4xl font-bold mb-2">Welcome to Your Dashboard</h1>
+      <p class="text-lg text-green-50">Track your predictions, manage your wallet, and level up!</p>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 space-y-6">
+        <section>
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold">Live Match Predictions</h2>
+            <button
+              id="toggle-realtime"
+              class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded text-sm transition-colors"
+            >
+              <span class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                Real-time: ON
+              </span>
+            </button>
+          </div>
+          
+          <div class="space-y-6">
+            <AIPredictionWidget
+              matchId="match_001"
+              homeTeam="Manchester United"
+              awayTeam="Liverpool"
+            />
+            
+            <AIPredictionWidget
+              matchId="match_002"
+              homeTeam="Barcelona"
+              awayTeam="Real Madrid"
+            />
+            
+            <AIPredictionWidget
+              matchId="match_003"
+              homeTeam="Bayern Munich"
+              awayTeam="Borussia Dortmund"
+            />
+          </div>
+        </section>
+
+        <section class="bg-neutral-700 rounded-lg p-6 border border-neutral-600">
+          <h2 class="text-2xl font-bold mb-4">Data Processing Status</h2>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-300">Real-time Stream:</span>
+              <span id="stream-status" class="text-green-400 font-bold">Active</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-300">Active Matches:</span>
+              <span id="active-matches" class="font-bold">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-300">Buffered Items:</span>
+              <span id="buffered-items" class="font-bold">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-300">Last Update:</span>
+              <span id="last-process" class="text-sm">--</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="space-y-6">
+        <CryptoWallet userId="demo-user" />
+      </div>
+    </div>
+
+    <section>
+      <GamificationDashboard userId="demo-user" />
+    </section>
+
+    <section class="bg-neutral-700 rounded-lg p-6 border border-neutral-600">
+      <h2 class="text-2xl font-bold mb-4">Quick Stats</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-neutral-800 rounded p-4 border border-neutral-600">
+          <div class="text-2xl font-bold text-green-400" id="total-predictions">0</div>
+          <div class="text-sm text-neutral-400">Total Predictions</div>
+        </div>
+        <div class="bg-neutral-800 rounded p-4 border border-neutral-600">
+          <div class="text-2xl font-bold text-blue-400" id="accuracy-rate">0%</div>
+          <div class="text-sm text-neutral-400">Accuracy Rate</div>
+        </div>
+        <div class="bg-neutral-800 rounded p-4 border border-neutral-600">
+          <div class="text-2xl font-bold text-yellow-400" id="value-bets">0</div>
+          <div class="text-sm text-neutral-400">Value Bets Found</div>
+        </div>
+        <div class="bg-neutral-800 rounded p-4 border border-neutral-600">
+          <div class="text-2xl font-bold text-purple-400" id="roi">0%</div>
+          <div class="text-sm text-neutral-400">ROI</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    import dataProcessor from "../utils/dataProcessing";
+
+    let realtimeEnabled = true;
+
+    function startDataProcessing() {
+      dataProcessor.startRealtimeProcessing();
+      
+      dataProcessor.ingestData("match_001", {
+        homeForm: 0.75,
+        awayForm: 0.70,
+        homeGoalsAvg: 2.1,
+        awayGoalsAvg: 1.8,
+      });
+
+      dataProcessor.ingestData("match_002", {
+        homeForm: 0.82,
+        awayForm: 0.78,
+        homeGoalsAvg: 2.5,
+        awayGoalsAvg: 2.2,
+      });
+
+      dataProcessor.ingestData("match_003", {
+        homeForm: 0.68,
+        awayForm: 0.65,
+        homeGoalsAvg: 1.9,
+        awayGoalsAvg: 1.6,
+      });
+    }
+
+    function updateStats() {
+      const stats = dataProcessor.getStreamStats();
+      document.getElementById("active-matches")!.textContent = stats.activeMatches.toString();
+      document.getElementById("buffered-items")!.textContent = stats.bufferedItems.toString();
+      document.getElementById("last-process")!.textContent = new Date().toLocaleTimeString();
+    }
+
+    function updateQuickStats() {
+      document.getElementById("total-predictions")!.textContent = (Math.floor(Math.random() * 50) + 100).toString();
+      document.getElementById("accuracy-rate")!.textContent = `${(Math.random() * 20 + 65).toFixed(1)}%`;
+      document.getElementById("value-bets")!.textContent = (Math.floor(Math.random() * 10) + 5).toString();
+      document.getElementById("roi")!.textContent = `${(Math.random() * 15 + 5).toFixed(1)}%`;
+    }
+
+    document.getElementById("toggle-realtime")?.addEventListener("click", (e) => {
+      realtimeEnabled = !realtimeEnabled;
+      const button = e.target as HTMLButtonElement;
+      
+      if (realtimeEnabled) {
+        dataProcessor.startRealtimeProcessing();
+        button.innerHTML = `
+          <span class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+            Real-time: ON
+          </span>
+        `;
+        button.classList.remove("bg-neutral-600");
+        button.classList.add("bg-green-500", "hover:bg-green-600");
+        document.getElementById("stream-status")!.textContent = "Active";
+        document.getElementById("stream-status")!.classList.remove("text-red-400");
+        document.getElementById("stream-status")!.classList.add("text-green-400");
+      } else {
+        dataProcessor.stopRealtimeProcessing();
+        button.innerHTML = `
+          <span class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-white rounded-full"></span>
+            Real-time: OFF
+          </span>
+        `;
+        button.classList.remove("bg-green-500", "hover:bg-green-600");
+        button.classList.add("bg-neutral-600");
+        document.getElementById("stream-status")!.textContent = "Paused";
+        document.getElementById("stream-status")!.classList.remove("text-green-400");
+        document.getElementById("stream-status")!.classList.add("text-red-400");
+      }
+    });
+
+    startDataProcessing();
+    updateStats();
+    updateQuickStats();
+
+    setInterval(updateStats, 5000);
+    setInterval(updateQuickStats, 10000);
+  </script>
+</Layout>

@@ -2,5 +2,28 @@
   publish = "dist"
   command = "npm run build"
 
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/football-predictions"
+  to = "/.netlify/functions/football-predictions"
+  status = 200
+
+[[redirects]]
+  from = "/api/geo-check"
+  to = "/.netlify/functions/geo-check"
+  status = 200
+
+[[redirects]]
+  from = "/api/ev-calculator"
+  to = "/.netlify/functions/ev-calculator"
+  status = 200
+
+[[redirects]]
+  from = "/api/odds-updates"
+  to = "/.netlify/functions/odds-updates"
+  status = 200
+
 [template]
   required-extensions = ["supabase"]

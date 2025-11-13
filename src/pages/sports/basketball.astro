@@ -1,0 +1,106 @@
+---
+import Layout from "../../components/Layout.astro";
+
+const upcomingMatches = [
+  {
+    league: "NBA",
+    homeTeam: "Los Angeles Lakers",
+    awayTeam: "Boston Celtics",
+    date: "Tonight, 20:30",
+    prediction: "Over 220.5 Points",
+    confidence: "High",
+    odds: "1.90"
+  },
+  {
+    league: "NBA",
+    homeTeam: "Golden State Warriors",
+    awayTeam: "Phoenix Suns",
+    date: "Tonight, 22:00",
+    prediction: "Away Win",
+    confidence: "Medium",
+    odds: "2.25"
+  },
+  {
+    league: "EuroLeague",
+    homeTeam: "Real Madrid",
+    awayTeam: "Barcelona",
+    date: "Tomorrow, 19:00",
+    prediction: "Home Win & Over 160.5",
+    confidence: "High",
+    odds: "2.40"
+  }
+];
+
+const tips = [
+  "Monitor player injury reports and rotations",
+  "Analyze pace of play and offensive efficiency",
+  "Consider back-to-back game situations",
+  "Review recent shooting percentages",
+  "Check head-to-head matchups and historical trends"
+];
+---
+
+<Layout title="Basketball Predictions - Match Predictz">
+  <div class="space-y-12">
+    <section>
+      <h1 class="text-4xl font-bold mb-4">Basketball Predictions</h1>
+      <p class="text-neutral-300 text-lg mb-8">
+        Professional basketball predictions for NBA, EuroLeague, and international competitions. Get expert analysis on point spreads, totals, and moneyline picks.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-3xl font-bold mb-6">Today's Basketball Picks</h2>
+      <div class="space-y-4">
+        {upcomingMatches.map((match) => (
+          <div class="bg-neutral-700 p-6 rounded-lg border border-neutral-600 hover:border-green-500 transition-all">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="text-sm text-orange-400 font-semibold mb-2">{match.league}</div>
+                <div class="text-xl font-bold mb-1">
+                  {match.homeTeam} vs {match.awayTeam}
+                </div>
+                <div class="text-sm text-neutral-400">{match.date}</div>
+              </div>
+              <div class="flex flex-col md:items-end gap-2">
+                <div class="bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold">
+                  {match.prediction}
+                </div>
+                <div class="flex gap-4 text-sm">
+                  <span class={`font-semibold ${match.confidence === "High" ? "text-green-400" : "text-yellow-400"}`}>
+                    {match.confidence} Confidence
+                  </span>
+                  <span class="text-neutral-300">Odds: {match.odds}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-neutral-700 p-8 rounded-lg border border-neutral-600">
+      <h2 class="text-2xl font-bold mb-6">Basketball Betting Tips</h2>
+      <ul class="space-y-3">
+        {tips.map((tip) => (
+          <li class="flex items-start gap-3">
+            <span class="text-orange-400 text-xl">✓</span>
+            <span class="text-neutral-300">{tip}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-4">About Basketball Predictions</h2>
+      <div class="text-neutral-300 space-y-4">
+        <p>
+          Basketball betting offers unique opportunities with fast-paced action and high-scoring games. Our experts analyze team statistics, player performance, and matchup data to provide accurate predictions.
+        </p>
+        <p>
+          We cover all major basketball leagues including the NBA, EuroLeague, NCAA, and international competitions. Our predictions include point spreads, over/under totals, moneyline picks, and player props.
+        </p>
+      </div>
+    </section>
+  </div>
+</Layout>

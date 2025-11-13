@@ -1,0 +1,233 @@
+---
+interface Props {
+  matchId: string;
+  homeTeam: string;
+  awayTeam: string;
+}
+
+const { matchId, homeTeam, awayTeam } = Astro.props;
+---
+
+<div class="ai-widget bg-gradient-to-br from-neutral-700 to-neutral-800 rounded-lg border border-green-500 p-6 shadow-lg">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-xl font-bold flex items-center">
+      <span class="text-2xl mr-2">🤖</span>
+      AI Prediction
+    </h3>
+    <div class="flex items-center text-xs">
+      <div class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+      <span class="text-green-400">Live</span>
+    </div>
+  </div>
+
+  <div class="match-header mb-4">
+    <div class="text-center text-sm text-neutral-400 mb-2" id={`match-time-${matchId}`}>
+      Loading...
+    </div>
+    <div class="flex justify-between items-center">
+      <div class="text-lg font-semibold">{homeTeam}</div>
+      <div class="text-neutral-400">vs</div>
+      <div class="text-lg font-semibold">{awayTeam}</div>
+    </div>
+  </div>
+
+  <div class="prediction-confidence mb-4">
+    <div class="flex justify-between items-center mb-2">
+      <span class="text-sm text-neutral-300">Confidence</span>
+      <span class="text-lg font-bold text-green-400" id={`confidence-${matchId}`}>--</span>
+    </div>
+    <div class="w-full bg-neutral-600 rounded-full h-2">
+      <div
+        id={`confidence-bar-${matchId}`}
+        class="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full transition-all duration-500"
+        style="width: 0%"
+      ></div>
+    </div>
+  </div>
+
+  <div class="top-prediction bg-green-500 bg-opacity-20 border border-green-500 rounded-lg p-4 mb-4">
+    <div class="text-xs text-green-400 font-semibold mb-2">TOP PREDICTION</div>
+    <div class="flex justify-between items-center">
+      <div>
+        <div class="text-lg font-bold" id={`top-prediction-${matchId}`}>Loading...</div>
+        <div class="text-sm text-neutral-300" id={`top-prediction-desc-${matchId}`}></div>
+      </div>
+      <div class="text-right">
+        <div class="text-2xl font-bold text-green-400" id={`top-prediction-odds-${matchId}`}>--</div>
+        <div class="text-xs text-neutral-400">Odds</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="win-probabilities grid grid-cols-3 gap-2 mb-4">
+    <div class="bg-neutral-800 rounded p-3 text-center border border-neutral-600 hover:border-green-500 transition-colors">
+      <div class="text-xs text-neutral-400 mb-1">Home Win</div>
+      <div class="text-xl font-bold text-green-400" id={`home-prob-${matchId}`}>--</div>
+      <div class="text-xs text-neutral-500" id={`home-odds-${matchId}`}>--</div>
+    </div>
+    <div class="bg-neutral-800 rounded p-3 text-center border border-neutral-600 hover:border-yellow-500 transition-colors">
+      <div class="text-xs text-neutral-400 mb-1">Draw</div>
+      <div class="text-xl font-bold text-yellow-400" id={`draw-prob-${matchId}`}>--</div>
+      <div class="text-xs text-neutral-500" id={`draw-odds-${matchId}`}>--</div>
+    </div>
+    <div class="bg-neutral-800 rounded p-3 text-center border border-neutral-600 hover:border-blue-500 transition-colors">
+      <div class="text-xs text-neutral-400 mb-1">Away Win</div>
+      <div class="text-xl font-bold text-blue-400" id={`away-prob-${matchId}`}>--</div>
+      <div class="text-xs text-neutral-500" id={`away-odds-${matchId}`}>--</div>
+    </div>
+  </div>
+
+  <div class="score-forecast bg-neutral-800 rounded-lg p-4 mb-4 border border-neutral-600">
+    <div class="text-sm text-neutral-300 mb-2 font-semibold">Score Forecast</div>
+    <div class="flex justify-center items-center gap-4">
+      <div class="text-center">
+        <div class="text-3xl font-bold text-green-400" id={`home-score-${matchId}`}>-</div>
+        <div class="text-xs text-neutral-400">{homeTeam}</div>
+      </div>
+      <div class="text-2xl text-neutral-500">:</div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-blue-400" id={`away-score-${matchId}`}>-</div>
+        <div class="text-xs text-neutral-400">{awayTeam}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bet-suggestions space-y-2 mb-4">
+    <div class="text-sm text-neutral-300 font-semibold mb-2">💡 Smart Bet Suggestions</div>
+    <div id={`bet-suggestions-${matchId}`} class="space-y-2">
+      <div class="text-xs text-neutral-400 text-center py-2">Loading suggestions...</div>
+    </div>
+  </div>
+
+  <div class="value-bets">
+    <div class="text-sm text-neutral-300 font-semibold mb-2">⭐ EV+ Opportunities</div>
+    <div id={`value-bets-${matchId}`} class="space-y-2">
+      <div class="text-xs text-neutral-400 text-center py-2">Calculating...</div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ matchId, homeTeam, awayTeam }}>
+  async function loadPredictionData() {
+    try {
+      const features = {
+        homeFormScore: 0.7 + Math.random() * 0.2,
+        awayFormScore: 0.6 + Math.random() * 0.2,
+        homeGoalsAvg: 1.5 + Math.random() * 0.8,
+        awayGoalsAvg: 1.2 + Math.random() * 0.7,
+        homeDefenseRating: 0.65 + Math.random() * 0.2,
+        awayDefenseRating: 0.60 + Math.random() * 0.2,
+        headToHeadAdvantage: Math.random() * 0.4 - 0.2,
+        venueAdvantage: 0.1 + Math.random() * 0.15,
+        recentMeetingsGoals: 2.5 + Math.random() * 1.0,
+      };
+
+      const marketOdds = {
+        homeWin: 2.0 + Math.random() * 1.5,
+        draw: 3.2 + Math.random() * 0.8,
+        awayWin: 2.5 + Math.random() * 2.0,
+        over25: 1.8 + Math.random() * 0.5,
+        btts: 1.9 + Math.random() * 0.4,
+      };
+
+      const response = await fetch('/api/ev-calculator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ features, marketOdds }),
+      });
+
+      const data = await response.json();
+      const predictions = data.predictions;
+
+      document.getElementById(`confidence-${matchId}`).textContent = `${predictions.confidence}%`;
+      document.getElementById(`confidence-bar-${matchId}`).style.width = `${predictions.confidence}%`;
+
+      document.getElementById(`home-prob-${matchId}`).textContent = 
+        `${Math.round(predictions.homeWinProbability * 100)}%`;
+      document.getElementById(`draw-prob-${matchId}`).textContent = 
+        `${Math.round(predictions.drawProbability * 100)}%`;
+      document.getElementById(`away-prob-${matchId}`).textContent = 
+        `${Math.round(predictions.awayWinProbability * 100)}%`;
+
+      document.getElementById(`home-odds-${matchId}`).textContent = marketOdds.homeWin.toFixed(2);
+      document.getElementById(`draw-odds-${matchId}`).textContent = marketOdds.draw.toFixed(2);
+      document.getElementById(`away-odds-${matchId}`).textContent = marketOdds.awayWin.toFixed(2);
+
+      document.getElementById(`home-score-${matchId}`).textContent = 
+        Math.round(predictions.expectedHomeGoals).toString();
+      document.getElementById(`away-score-${matchId}`).textContent = 
+        Math.round(predictions.expectedAwayGoals).toString();
+
+      const maxProb = Math.max(
+        predictions.homeWinProbability,
+        predictions.drawProbability,
+        predictions.awayWinProbability
+      );
+
+      let topPrediction = "Home Win";
+      let topOdds = marketOdds.homeWin;
+      if (predictions.drawProbability === maxProb) {
+        topPrediction = "Draw";
+        topOdds = marketOdds.draw;
+      } else if (predictions.awayWinProbability === maxProb) {
+        topPrediction = "Away Win";
+        topOdds = marketOdds.awayWin;
+      }
+
+      document.getElementById(`top-prediction-${matchId}`).textContent = topPrediction;
+      document.getElementById(`top-prediction-desc-${matchId}`).textContent = 
+        `${Math.round(maxProb * 100)}% probability`;
+      document.getElementById(`top-prediction-odds-${matchId}`).textContent = topOdds.toFixed(2);
+
+      const suggestions = [
+        { market: "Over 2.5 Goals", prob: predictions.over25Probability, odds: marketOdds.over25 },
+        { market: "BTTS Yes", prob: predictions.bttsGGProbability, odds: marketOdds.btts },
+      ];
+
+      const suggestionsHtml = suggestions
+        .map(
+          (s) => `
+          <div class="bg-neutral-800 rounded p-2 border border-neutral-600 text-xs">
+            <div class="flex justify-between items-center">
+              <span class="font-semibold">${s.market}</span>
+              <span class="text-green-400">${Math.round(s.prob * 100)}%</span>
+            </div>
+            <div class="text-neutral-400 mt-1">Odds: ${s.odds.toFixed(2)}</div>
+          </div>
+        `
+        )
+        .join('');
+      
+      document.getElementById(`bet-suggestions-${matchId}`).innerHTML = suggestionsHtml;
+
+      if (data.valueBets && data.valueBets.length > 0) {
+        const valueBetsHtml = data.valueBets
+          .slice(0, 3)
+          .map(
+            (vb) => `
+            <div class="bg-green-500 bg-opacity-10 border border-green-500 rounded p-2 text-xs">
+              <div class="flex justify-between items-center">
+                <span class="font-semibold text-green-400">${vb.market}</span>
+                <span class="text-white font-bold">+${vb.roi.toFixed(1)}% ROI</span>
+              </div>
+              <div class="text-neutral-300 mt-1">
+                Suggested stake: ${vb.stake.toFixed(1)}% | Odds: ${vb.odds.toFixed(2)}
+              </div>
+            </div>
+          `
+          )
+          .join('');
+        
+        document.getElementById(`value-bets-${matchId}`).innerHTML = valueBetsHtml;
+      } else {
+        document.getElementById(`value-bets-${matchId}`).innerHTML = 
+          '<div class="text-xs text-neutral-400 text-center py-2">No value bets found currently</div>';
+      }
+    } catch (error) {
+      console.error('Failed to load prediction data:', error);
+    }
+  }
+
+  loadPredictionData();
+  setInterval(loadPredictionData, 30000);
+</script>

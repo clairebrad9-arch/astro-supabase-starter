@@ -1,0 +1,79 @@
+---
+interface Props {
+  showDisclaimer?: boolean;
+}
+
+const { showDisclaimer = true } = Astro.props;
+---
+
+<div id="geo-blocker" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+  <div class="bg-neutral-800 border border-red-500 rounded-lg p-8 max-w-md text-center">
+    <div class="text-6xl mb-4">🚫</div>
+    <h2 class="text-2xl font-bold text-red-500 mb-4">Access Restricted</h2>
+    <p id="geo-message" class="text-neutral-300 mb-6"></p>
+    <p class="text-sm text-neutral-400">
+      If you believe this is an error, please contact support.
+    </p>
+  </div>
+</div>
+
+{showDisclaimer && (
+  <div id="legal-disclaimer" class="bg-yellow-500 bg-opacity-20 border-l-4 border-yellow-500 p-4 mb-6 hidden">
+    <div class="flex items-start">
+      <div class="text-2xl mr-3">⚠️</div>
+      <div>
+        <h3 class="font-bold text-yellow-400 mb-1">Legal Disclaimer</h3>
+        <p id="disclaimer-text" class="text-sm text-neutral-200"></p>
+        <p class="text-xs text-neutral-400 mt-2">You must be 18+ to use this service.</p>
+      </div>
+    </div>
+  </div>
+)}
+
+<script>
+  async function checkGeoLocation() {
+    try {
+      const response = await fetch('/.netlify/functions/geo-check');
+      const data = await response.json();
+      
+      const disclaimerEl = document.getElementById('legal-disclaimer');
+      const disclaimerTextEl = document.getElementById('disclaimer-text');
+      const geoBlockerEl = document.getElementById('geo-blocker');
+      const geoMessageEl = document.getElementById('geo-message');
+      
+      if (data.isRestricted) {
+        if (geoMessageEl) geoMessageEl.textContent = data.message;
+        if (geoBlockerEl) geoBlockerEl.classList.remove('hidden');
+      } else {
+        if (disclaimerEl && disclaimerTextEl) {
+          disclaimerTextEl.textContent = data.disclaimer;
+          disclaimerEl.classList.remove('hidden');
+        }
+      }
+
+      localStorage.setItem('userGeo', JSON.stringify({
+        country: data.country,
+        canAccess: data.canAccess,
+        timestamp: Date.now()
+      }));
+    } catch (error) {
+      console.error('Geo check failed:', error);
+    }
+  }
+
+  const cached = localStorage.getItem('userGeo');
+  if (cached) {
+    const data = JSON.parse(cached);
+    const hourAgo = Date.now() - 3600000;
+    if (data.timestamp > hourAgo) {
+      if (!data.canAccess) {
+        const geoBlockerEl = document.getElementById('geo-blocker');
+        if (geoBlockerEl) geoBlockerEl.classList.remove('hidden');
+      }
+    } else {
+      checkGeoLocation();
+    }
+  } else {
+    checkGeoLocation();
+  }
+</script>
